@@ -80,7 +80,7 @@ int main()
             
             // "1 2" => "2"
             if (*arguments < '0' || *arguments > '9' || arguments[1] != '\0') {
-                // invalid register - must be just one digit at end of string
+                // invalid register - must be just lsone digit at end of string
                 cout << "ERROR" << endl;
                 continue; // next loop of the repl
             }
@@ -88,7 +88,7 @@ int main()
             
             int sum = registers[reg2] + registers[reg3];
             if (sum > 100 || sum < -100) {
-                cout << "ERROR" << endl;
+                cout << "ERROR:overflow" << endl;
                 continue; // next loop of the repl
             }
             
