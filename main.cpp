@@ -5,7 +5,7 @@
 
 using namespace std;
 
-int quit();
+int registers[10] = {};
 void help(){
      cout << "Supported commands:" << endl
           << "quit" << endl
@@ -15,17 +15,36 @@ void help(){
           << "asm.reg.dbg" << endl
           << "help" << endl;
 };
-char[] cmdprompt(char line[],char prompt[]){
+void cmdprompt(char line[],char prompt[]){
      char* argument = line + strlen("cmd.prompt "); 
             if (strlen(argument) < 100 && *argument != '\0')
-                strcpy(prompt, argument);
-                return prompt;
+				strcpy(prompt, argument);
+ 
+};
+int asmregset(char line[]){
+     char* arguments = line + strlen("asm.reg.set ");
+            if (*arguments < '0' || *arguments > '9' || arguments[1] != ' ') {
+                cout << "ERROR" << endl;
+                return 1;
+            }
+            int reg = *arguments - '0';
+            arguments += 2;
+            char* endOfNumber = NULL;
+            long number = strtol(arguments, &endOfNumber, 0);
+            if (!endOfNumber || *endOfNumber != '\0' 
+                || number < -100 || number > 100) { 
+                cout << "ERROR" << endl;
+                return 2;
+            }
+            registers[reg] = number;
+            cout << "OK" << endl; // something wrong here need to be fixed 
+            return 3;
 };
 int main()
 {
     char line[1000];
     char prompt[100] = ">";
-    int registers[10] = {};
+    
     
     while(true) {
         cout << prompt << " ";
@@ -33,31 +52,15 @@ int main()
         if (strcmp(line, "quit") == 0) {
            break;
         } else if (strcmp(line, "help") == 0) {
-            help;
+            help();
         } else if (strncmp(line, "cmd.prompt ", strlen("cmd.prompt ")) == 0) {
-            prompt=cmdprompt(line,prompt);
+            cmdprompt(line,prompt);
         } else if (strncmp(line, "asm.reg.set ", strlen("asm.reg.set ")) == 0) {
-            char* arguments = line + strlen("asm.reg.set ");
-            // "asm.reg.set 0 +15" => arguments="0 +15"
-            // "asm.reg.set 9 -115" => arguments="9 -115"
-            if (*arguments < '0' || *arguments > '9' || arguments[1] != ' ') {
-                // invalid register - must be just one digit
-                cout << "ERROR" << endl;
+           if(asmregset(line)==1)
                 continue; // next loop of the repl
-            }
-            int reg = *arguments - '0';
-            arguments += 2;
-            // "0 +15" => "+15"
-            // "9 -115" => "-115"
-            char* endOfNumber = NULL;
-            long number = strtol(arguments, &endOfNumber, 0);
-            if (!endOfNumber || *endOfNumber != '\0' //should point to the '\0' after the number in arguments
-                || number < -100 || number > 100) { 
-                cout << "ERROR" << endl;
-                continue;
-            }
-            registers[reg] = number;
-            cout << "OK" << endl;
+        else    if (asmregset(line)==1)
+            continue;
+            
         } else if (strncmp(line, "asm.reg.add ", strlen("asm.reg.add ")) == 0) {
             char* arguments = line + strlen("asm.reg.set ");
             // "asm.reg.add 0 1 2" => arguments="0 1 2"
@@ -105,6 +108,3 @@ int main()
     }
     return 0;
 }
-int quit{
-    return 0;
-};
