@@ -19,7 +19,6 @@ void cmdprompt(char line[],char prompt[]){
      char* argument = line + strlen("cmd.prompt "); 
             if (strlen(argument) < 100 && *argument != '\0')
 				strcpy(prompt, argument);
- 
 };
 int asmregset(char line[]){
      char* arguments = line + strlen("asm.reg.set ");
@@ -33,7 +32,7 @@ int asmregset(char line[]){
             long number = strtol(arguments, &endOfNumber, 0);
             if (!endOfNumber || *endOfNumber != '\0' 
                 || number < -100 || number > 100) { 
-                cout << "ERROR" << endl;
+                cout << "ERROR:overflow" << endl;
                 return 2;
             }
             registers[reg] = number;
@@ -70,6 +69,11 @@ int asdregadd(char line[]){
             cout << "OK" << endl;
             return 5;//same shit here ...
 };
+void asmregdbg(){
+     for (int i=0; i < 10; i++) {
+                cout << "REG_" << i << " = " << registers[i] << endl;
+            }
+};
 int main()
 {
     char line[1000];
@@ -97,10 +101,7 @@ int main()
            else if (asdregadd(line)==3)continue;
            else if (asdregadd(line)==4)continue;
         } else if (strncmp(line, "asm.reg.dbg", strlen("asm.reg.dbg")) == 0) {
-            for (int i=0; i < 10; i++) {
-                cout << "REG_" << i << " = " << registers[i] << endl;
-            }
-            
+            asmregdbg();
         } else {
             cout << "Unknown command " << line << endl; 
         }
