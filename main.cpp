@@ -40,6 +40,36 @@ int asmregset(char line[]){
             cout << "OK" << endl; // something wrong here need to be fixed 
             return 3;
 };
+int asdregadd(char line[]){
+     char* arguments = line + strlen("asm.reg.set ");
+            if (*arguments < '0' || *arguments > '9' || arguments[1] != ' ') {
+                cout << "ERROR" << endl;
+                return 1;
+            }
+            int reg1 = *arguments - '0';
+            arguments += 2;
+            if (*arguments < '0' || *arguments > '9' || arguments[1] != ' ') {
+                cout << "ERROR" << endl;
+                return 2;
+            }
+            int reg2 = *arguments - '0';
+            arguments += 2;
+            if (*arguments < '0' || *arguments > '9' || arguments[1] != '\0') {
+                cout << "ERROR" << endl;
+                return 3;
+            }
+            int reg3 = *arguments - '0';
+            
+            int sum = registers[reg2] + registers[reg3];
+            if (sum > 100 || sum < -100) {
+                cout << "ERROR:overflow" << endl;
+                return 4;
+            }
+            
+            registers[reg1] = sum;
+            cout << "OK" << endl;
+            return 5;//same shit here ...
+};
 int main()
 {
     char line[1000];
@@ -62,41 +92,10 @@ int main()
             continue;
             
         } else if (strncmp(line, "asm.reg.add ", strlen("asm.reg.add ")) == 0) {
-            char* arguments = line + strlen("asm.reg.set ");
-            // "asm.reg.add 0 1 2" => arguments="0 1 2"
-            if (*arguments < '0' || *arguments > '9' || arguments[1] != ' ') {
-                // invalid register - must be just one digit
-                cout << "ERROR" << endl;
-                continue; // next loop of the repl
-            }
-            int reg1 = *arguments - '0';
-            arguments += 2;
-            // "0 1 2" => "1 2"
-            if (*arguments < '0' || *arguments > '9' || arguments[1] != ' ') {
-                // invalid register - must be just one digit
-                cout << "ERROR" << endl;
-                continue; // next loop of the repl
-            }
-            int reg2 = *arguments - '0';
-            arguments += 2;
-            
-            // "1 2" => "2"
-            if (*arguments < '0' || *arguments > '9' || arguments[1] != '\0') {
-                // invalid register - must be just lsone digit at end of string
-                cout << "ERROR" << endl;
-                continue; // next loop of the repl
-            }
-            int reg3 = *arguments - '0';
-            
-            int sum = registers[reg2] + registers[reg3];
-            if (sum > 100 || sum < -100) {
-                cout << "ERROR:overflow" << endl;
-                continue; // next loop of the repl
-            }
-            
-            registers[reg1] = sum;
-            cout << "OK" << endl;
-            
+           if(asdregadd(line)==1) continue;
+           else if (asdregadd(line)==2)continue;
+           else if (asdregadd(line)==3)continue;
+           else if (asdregadd(line)==4)continue;
         } else if (strncmp(line, "asm.reg.dbg", strlen("asm.reg.dbg")) == 0) {
             for (int i=0; i < 10; i++) {
                 cout << "REG_" << i << " = " << registers[i] << endl;
