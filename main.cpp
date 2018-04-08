@@ -5,13 +5,22 @@
 
 using namespace std;
 
-// The code works
-// The code is ugly
-//  - there is repetition
-//  - if you want to add a new command you need to touch the code in several places
-//  - all is in one function and is hard to read
-//  - your homework is to fix all that!
-
+int quit();
+void help(){
+     cout << "Supported commands:" << endl
+          << "quit" << endl
+          << "cmd.prompt" << endl
+          << "asm.reg.set" << endl
+          << "asm.reg.add" << endl
+          << "asm.reg.dbg" << endl
+          << "help" << endl;
+};
+char[] cmdprompt(char line[],char prompt[]){
+     char* argument = line + strlen("cmd.prompt "); 
+            if (strlen(argument) < 100 && *argument != '\0')
+                strcpy(prompt, argument);
+                return prompt;
+};
 int main()
 {
     char line[1000];
@@ -22,21 +31,11 @@ int main()
         cout << prompt << " ";
         cin.getline(line, 1000);
         if (strcmp(line, "quit") == 0) {
-            break;
+           break;
         } else if (strcmp(line, "help") == 0) {
-            cout << "Supported commands:" << endl
-                 << "quit" << endl
-                 << "cmd.prompt" << endl
-                 << "asm.reg.set" << endl
-                 << "asm.reg.add" << endl
-                 << "asm.reg.dbg" << endl
-                 << "help" << endl;
+            help;
         } else if (strncmp(line, "cmd.prompt ", strlen("cmd.prompt ")) == 0) {
-            char* argument = line + strlen("cmd.prompt ");
-            // "cmd.prompt %asd" => argument="%asd"
-            // "cmd.prompt ?1" => argument="?1"
-            if (strlen(argument) < 100 && *argument != '\0')
-                strcpy(prompt, argument);
+            prompt=cmdprompt(line,prompt);
         } else if (strncmp(line, "asm.reg.set ", strlen("asm.reg.set ")) == 0) {
             char* arguments = line + strlen("asm.reg.set ");
             // "asm.reg.set 0 +15" => arguments="0 +15"
@@ -106,3 +105,6 @@ int main()
     }
     return 0;
 }
+int quit{
+    return 0;
+};
